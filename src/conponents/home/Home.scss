@@ -1,3 +1,7 @@
-.chart{
-  height: 600px;
+@import "../../style/common";
+.btnspan{
+  display: inline-block;
+  margin-left: 3px;
+  color: $mainColor;
+  cursor: pointer;
 }

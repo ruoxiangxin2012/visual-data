@@ -509,11 +509,9 @@ class ScatterChart extends PureComponent{
     return (
       <div className='examples'>
         <div className='parent'>
-          <label> render a airport chart. </label>
           <ReactEcharts
             option={this.getOption()}
-            style={{height: '700px', width: '100%'}}
-            className='react_for_echarts' />
+            style={this.props.style} />
         </div>
       </div>
     );
