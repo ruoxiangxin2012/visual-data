@@ -1,0 +1,35 @@
+.panel{
+
+  .breadCrumb{
+    padding: 10px;
+    text-align: left;
+  }
+
+  .panelFooter{
+    text-align: right;
+  }
+
+  .marginBottom20{
+    margin-bottom: 20px;
+  }
+
+  .formItem {
+    text-align: right;
+
+    label{
+      color: rgba(0, 0, 0, 0.85);
+      font-size: 14px;
+
+      &:after{
+        content: ":";
+        margin: 0 8px 0 2px;
+        position: relative;
+        top: -0.5px;
+      }
+    }
+  }
+
+  .hide{
+    display: none;
+  }
+}

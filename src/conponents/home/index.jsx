@@ -1,85 +1,178 @@
 import React, {
   PureComponent,
 } from 'react';
+import axios from 'axios';
+import { HashRouter } from 'react-router-dom';
 import {
   Card,
   Table,
-  Upload,
   Button,
-  Icon,
+  Popconfirm,
+  message,
+  Modal,
+  Input,
 } from 'antd';
 import style from './Home.scss';
+import RenderChart from '../charts/RenderChart'
 import commonStyle from '../../style/common.scss';
 
 class Home extends PureComponent {
 
   state = {
-    dataSource: [{
-      name: '任务1',
-      chartType: '散点图',
-      dataType: '数据库',
-      dataAddress: '12334.fefw',
-    },{
-      name: '任务2',
-      chartType: '散点图',
-      dataType: '数据库',
-      dataAddress: '12334.fefw',
-    }]
+    taskNum: 10,
+    dataSource: [],
+    visibleChart: false,
+    visibleTaskName: false,
+    chartType: 'bar',
+    chartData: {},
+    newTaskName: '',
   };
+
+  componentDidMount() {
+    this.onLoad();
+  };
+
+  onLoad = async () => {
+    const res = await window.http.get('/mission_list/');
+    if (res.status === 0) {
+      this.setState({
+        dataSource: res.data,
+        taskNum: res.data.length,
+      })
+    }
+  }
+
+  delTask = async (id) => {
+    const res = await window.http.post('/mission_del/', {
+      mission_id: id,
+    });
+    if (res.status === 0) {
+      this.onLoad();
+      message.success('删除成功!');
+    }
+  };
+
+  showChart = async (id) => {
+    const res = await window.http.post('/load_data/', {
+      mission_id: id,
+    });
+    if (res.status === 0) {
+      this.setState({
+        visibleChart: true,
+        chartType: res.data.visual_type,
+        chartData: res.data.data,
+      })
+    }
+  };
+
+  hideModal = () =>
+    this.setState({
+      visibleChart: false,
+    });
+
+  changeTaskNamePanel = state =>
+    this.setState({
+      visibleTaskName: state,
+    });
+
+  changeTaskName = e =>
+    this.setState({
+      newTaskName: e.target.value,
+    });
+
+  addTask = () => {
+    if (this.state.newTaskName) {
+      this.props.history.push({
+        pathname: '/add',
+        query: {
+          name: this.state.newTaskName,
+        },
+      });
+    } else {
+      message.error('请填写任务名称！')
+    }
+  };
+
 
   columns = [{
     title: '任务名称',
     dataIndex: 'name',
   }, {
     title: '可是化组件类型',
-    dataIndex: 'chartType',
+    dataIndex: 'visual_type',
   }, {
     title: '数据源类型',
-    dataIndex: 'dataType',
+    dataIndex: 'source_type',
   },{
     title: '数据源地址',
-    dataIndex: 'dataAddress',
+    dataIndex: 'source_path',
   },{
     title: '操作',
     render: (text, record) => (
       <div>
-        <span className={style.btnspan}>查看</span>
-        <span className={style.btnspan}>删除</span>
+        <span
+          onClick={() => this.showChart(record.id)}
+          className={style.btnspan}
+        >查看</span>
+        <Popconfirm
+          placement="leftBottom"
+          title={'确定要删除该条任务？'}
+          onConfirm={() => this.delTask(record.id)}
+          okText="是"
+          cancelText="否"
+        >
+          <span className={style.btnspan}>删除</span>
+        </Popconfirm>
       </div>
     )
     }];
-
-  handlePreview = (file) => {
-    console.log(file);
-  }
-
-  change = (e) => {
-    const file = e.target.files[0];
-    console.log(e.target.value);
-  }
-
   render() {
     const {
+      taskNum,
       dataSource,
+      visibleChart,
+      visibleTaskName,
+      chartType,
+      chartData,
+      newTaskName,
     } = this.state;
     return (
       <div className={style.panel}>
         <div className={commonStyle.pageTitle}>任务管理</div>
         <Card>
-          <Table dataSource={dataSource} columns={this.columns} />
+          <div className={style.subHeader}>
+            <span>{`任务数量：${taskNum}`}</span>
+            <Button
+              onClick={ () => this.changeTaskNamePanel(true) }
+              className={commonStyle.floatRight}
+            >
+              添加任务
+            </Button>
+          </div>
+          <Table rowKey={'id'} dataSource={dataSource} columns={this.columns} />
         </Card>
 
-        <input type="file" onChange={this.change}/>
-
-        <Upload
-          onChange={this.handlePreview}
-          listType="picture"
-          action="//jsonplaceholder.typicode.com/posts/"
-          >
-          <Button>
-            <Icon type="upload" /> upload
-          </Button>
-        </Upload>
+        <Modal
+          title="图表详情"
+          visible={visibleChart}
+          footer={null}
+          onCancel={this.hideModal}
+        >
+          <RenderChart chartType={chartType} data={chartData} />
+        </Modal>
+        <Modal
+          title="请填写将要新增的任务名称"
+          wrapClassName="vertical-center-modal"
+          visible={visibleTaskName}
+          onOk={this.addTask}
+          onCancel={() => this.changeTaskNamePanel(false)}
+        >
+          <Input
+            value={newTaskName}
+            onChange={this.changeTaskName}
+            placeholder="任务名称"
+          />
+        </Modal>
       </div>
     );
   }

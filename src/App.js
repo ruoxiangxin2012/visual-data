@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import './App.css';
+import './libs/http';
 import {
   Header,
   SliderBar,
 } from './conponents/common'
 import Home from './conponents/home'
+import AddTask from './conponents/AddTask'
 
 
 class App extends Component {
@@ -16,9 +19,12 @@ class App extends Component {
           <div className='leftSlider'>
             <SliderBar />
           </div>
-          <div className='content'>
-            <Home />
-          </div>
+          <Router>
+            <div className='content'>
+              <Route exact path="/" component={Home} />
+              <Route exact path="/add" component={AddTask} />
+            </div>
+          </Router>
         </div>
       </div>
     );

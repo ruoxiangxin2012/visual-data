@@ -6,13 +6,22 @@ import ReactEcharts from 'echarts-for-react';
 
 class LineChart extends PureComponent {
   static propTypes = {
+    data: PropTypes.object,
     style: PropTypes.object
   };
   static defaultProps = {
-    style: {}
+    style: {},
+    data: {
+      legend_data: [],
+      series_data: [],
+    },
   };
 
   getOption = () => {
+    const {
+      legend_data,
+      series_data,
+    } = this.props.data;
     return {
       title : {
         text: '某站点用户访问来源',
@@ -26,7 +35,7 @@ class LineChart extends PureComponent {
       legend: {
         orient: 'vertical',
         left: 'left',
-        data: ['直接访问','邮件营销','联盟广告','视频广告','搜索引擎']
+        data: legend_data
       },
       series : [
         {
@@ -34,13 +43,7 @@ class LineChart extends PureComponent {
           type: 'pie',
           radius : '55%',
           center: ['50%', '60%'],
-          data:[
-            {value:335, name:'直接访问'},
-            {value:310, name:'邮件营销'},
-            {value:234, name:'联盟广告'},
-            {value:135, name:'视频广告'},
-            {value:1548, name:'搜索引擎'}
-          ],
+          data: series_data,
           itemStyle: {
             emphasis: {
               shadowBlur: 10,
@@ -53,6 +56,7 @@ class LineChart extends PureComponent {
     };
   }
   render() {
+    console.log(this.props.data);
     return (
       <ReactEcharts style={this.props.style} option={this.getOption()} />
     );
