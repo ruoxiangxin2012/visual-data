@@ -47,7 +47,7 @@ class RenderChart extends PureComponent {
       />
     }
     return <BbdChart
-      data={data}
+      data={JSON.stringify(data)}
       style={{ height: 600 }}
     />
   }
@@ -56,8 +56,6 @@ class RenderChart extends PureComponent {
       chartType,
       data,
     } = this.props;
-    console.log(chartType, data, 666);
-    console.log(chartType, data);
     return (
       <div >
         {

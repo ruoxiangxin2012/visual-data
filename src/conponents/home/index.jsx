@@ -23,13 +23,16 @@ class Home extends PureComponent {
     dataSource: [],
     visibleChart: false,
     visibleTaskName: false,
-    chartType: 'bar',
-    chartData: {},
+    chartType: 'bbd',
+    chartData: {
+      nodes: [{id: 1, name: 'c1'}, {id: 2, name: 'c2'}],
+      links: [{source: 1, target: 2, type: 1}]
+    },
     newTaskName: '',
   };
 
   componentDidMount() {
-    this.onLoad();
+    // this.onLoad();
   };
 
   onLoad = async () => {
@@ -64,6 +67,14 @@ class Home extends PureComponent {
       })
     }
   };
+  
+  test = () => {
+    this.setState({
+      visibleChart: true,
+    }, () => {
+    
+    })
+  }
 
   hideModal = () =>
     this.setState({
@@ -173,6 +184,7 @@ class Home extends PureComponent {
             placeholder="任务名称"
           />
         </Modal>
+        <div onClick={this.test}>测试</div>
       </div>
     );
   }

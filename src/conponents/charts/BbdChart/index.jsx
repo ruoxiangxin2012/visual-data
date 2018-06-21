@@ -5,12 +5,15 @@ import PropTypes from 'prop-types';
 
 class BbdChart extends PureComponent {
   static propTypes = {
-    data: PropTypes.object,
-    style: PropTypes.object
+    data: PropTypes.string,
+    style: PropTypes.object,
   };
   static defaultProps = {
     style: {},
-    data: {},
+    data: JSON.stringify({
+      nodes: [],
+      links: [],
+    }),
   };
 
   renderChart = () => {
@@ -23,9 +26,7 @@ class BbdChart extends PureComponent {
     });
 // 初始化拖动方法
     chart.drag();
-// 添加数据，node 包含id: 唯一标识,name: 显示名称。links包括 source: 起点,target: 终点,type: 点的类别
-    console.log(this.props.data, 111);
-    chart.add(this.props.data);
+    chart.add(JSON.parse(this.props.data));
   };
 
   componentDidMount() {
